@@ -221,7 +221,14 @@ export default class Sitemapper {
         if (this.debug) {
           console.debug(`Urlset found during "crawl('${url}')"`);
         }
-        const sites = data.urlset.url.map(site => site.loc && site.loc[0]);
+        let sites = data.urlset.url.map(site => {
+          if (site.loc && site.loc[0] && site.lastmod && site.lastmod[0] ) {
+            return {"site":site.loc[0], "date": site.lastmod[0]} 
+          }else if (site.loc && site.loc[0]) {
+            return {"site":site.loc[0]}
+          }
+        });
+        sites = sites.filter(x => x !== undefined);
         return [].concat(sites);
       } else if (data && data.sitemapindex) {
         if (this.debug) {
